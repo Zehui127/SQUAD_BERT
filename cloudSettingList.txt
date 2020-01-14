@@ -1,0 +1,27 @@
+export STORAGE_BUCKET=gs://run_bert_tpu
+export BERT_BASE_DIR=gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12
+export BERT_LARGE_DIR = gs://cloud-tpu-checkpoints/bert/uncased_L-24_H-1024_A-16
+export TASK_NAME=SQUAD
+export SQUAD_DIR=SQUAD
+
+python3 run_squad.py \
+  --vocab_file=$BERT_BASE_DIR/vocab.txt \
+  --bert_config_file=$BERT_BASE_DIR/bert_config.json \
+  --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt\
+  --do_train=False \
+  --train_file=$SQUAD_DIR/train-v2.0.json \
+  --do_predict=True \
+  --predict_file=$SQUAD_DIR/convHighConf-v3-wordflip-rem-num.json \
+  --train_batch_size=24 \
+  --learning_rate=3e-5 \
+  --num_train_epochs=2.0 \
+  --max_seq_length=384 \
+  --doc_stride=128 \
+  --output_dir=gs://run_bert_tpu/squad_large/ \
+  --use_tpu=True \
+  --tpu_name=$TPU_NAME \
+  --version_2_with_negative=True
+
+exit
+ctpu delete
+ctpu status
